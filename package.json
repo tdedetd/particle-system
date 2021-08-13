@@ -1,0 +1,16 @@
+{
+  "name": "moving-points",
+  "version": "1.0.0",
+  "description": "",
+  "private": "true",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --no-source-maps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "parcel": "^2.0.0-rc.0"
+  }
+}
