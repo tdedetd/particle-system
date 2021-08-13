@@ -1,29 +1,43 @@
 import { Vector } from './vector';
-import { randomRange, getDistance } from './utils';
+import { randomRange, getDistance, getColorString } from './utils';
+import { Themes } from './themes';
 
 export class Scene {
-   /**
+  /**
    * @param {HTMLCanvasElement} canvas 
    */
   constructor(canvas) {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
+    this.themes = new Themes();
 
-    this.pointRadius = 1;
     this.width = canvas.width;
     this.height = canvas.height;
-    this.maxLineDistance = 150;
+    this.pointRadius = 1;
+    this.maxLineDistance = 100;
 
     this.prevTimestamp = 0;
+    this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
+    this._updateColors();
 
     this._draw = this._draw.bind(this);
     this._generatePoints();
     requestAnimationFrame(this._draw);
   }
 
+  nextTheme() {
+    this.themes.next();
+    this._updateColors();
+  }
+
+  prevTheme() {
+    this.themes.prev();
+    this._updateColors();
+  }
+
   /**
-   * @param {number} timestamp 
+   * @param {number} timestamp
    */
   _draw(timestamp) {
     const timeDiff = timestamp - this.prevTimestamp;
@@ -59,7 +73,7 @@ export class Scene {
       for (let j = i + 1; j < this.points.length; j++) {
         const dist = getDistance(this.points[i].x, this.points[i].y, this.points[j].x, this.points[j].y);
         if (dist < this.maxLineDistance) {
-          this.ctx.strokeStyle = `rgb(255, 255, 255, ${1 - dist / this.maxLineDistance})`;
+          this.ctx.strokeStyle = getColorString(this.foreColor, 1 - dist / this.maxLineDistance);
           this.ctx.beginPath();
           this.ctx.moveTo(this.points[i].x, this.points[i].y);
           this.ctx.lineTo(this.points[j].x, this.points[j].y);
@@ -78,7 +92,7 @@ export class Scene {
         this.pointRadius * 2,
         this.pointRadius * 2, 0, 0, Math.PI * 2
       );
-      this.ctx.fillStyle = 'white';
+      this.ctx.fillStyle = getColorString(this.foreColor);
       this.ctx.fill();
     });
   }
@@ -96,5 +110,11 @@ export class Scene {
         point.speed = new Vector(point.speed.x, -point.speed.y);
       }
     });
+  }
+
+  _updateColors() {
+    this.foreColor = this.themes.selected.foreColor;
+    this.backColor = this.themes.selected.backColor;
+    this.canvas.style.backgroundColor = getColorString(this.backColor);
   }
 }
