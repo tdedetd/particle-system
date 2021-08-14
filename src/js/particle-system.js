@@ -1,6 +1,7 @@
 import { randomRange, getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
 import { Point } from './helpers/point';
+import { PointPolar } from './helpers/point-polar';
 
 export class ParticleSystem {
   /**
@@ -22,7 +23,7 @@ export class ParticleSystem {
     this._updateColors();
 
     this._draw = this._draw.bind(this);
-    this._generatePoints();
+    this._generateParticles();
   }
 
   nextTheme() {
@@ -40,10 +41,15 @@ export class ParticleSystem {
   }
 
   /**
-   * @param {Point} coords 
+   * @param {Point} center center of water circle
    */
-  waterCircle(coords) {
-    console.log(coords);
+  waterCircle(center) {
+    this.particles.forEach(part => {
+      const speedPolar = part.speed.toPolar();
+      const partPolar = new Point(part.x, part.y).toPolar(center);
+      const newSpeedPolar = new PointPolar(speedPolar.distance, partPolar.angle);
+      part.speed = newSpeedPolar.toCartesian();
+    });
   }
 
   /**
@@ -62,12 +68,18 @@ export class ParticleSystem {
     requestAnimationFrame(this._draw);
   }
 
-  _generatePoints() {
+  _generateParticles() {
     const count = Math.round(this.width * this.height / 5000);
-    this.points = [];
+
+    /**
+     * TODO: Particle class
+     * @type {{ x: number, y: number, speed: Point }[]}
+     */
+    this.particles = [];
 
     for (let i = 0; i < count; i++) {
-      this.points.push({
+      // TODO: coords as Point
+      this.particles.push({
         x: randomRange(this.pointRadius, this.width - this.pointRadius),
         y: randomRange(this.pointRadius, this.height - this.pointRadius),
         speed: new Point(
@@ -79,14 +91,15 @@ export class ParticleSystem {
   }
 
   _drawLines() {
-    for (let i = 0; i < this.points.length; i++) {
-      for (let j = i + 1; j < this.points.length; j++) {
-        const dist = getDistance(this.points[i].x, this.points[i].y, this.points[j].x, this.points[j].y);
+    for (let i = 0; i < this.particles.length; i++) {
+      for (let j = i + 1; j < this.particles.length; j++) {
+        // TODO: replace by Point method
+        const dist = getDistance(this.particles[i].x, this.particles[i].y, this.particles[j].x, this.particles[j].y);
         if (dist < this.maxLineDistance) {
           this.ctx.strokeStyle = getColorString(this.foreColor, 1 - dist / this.maxLineDistance);
           this.ctx.beginPath();
-          this.ctx.moveTo(this.points[i].x, this.points[i].y);
-          this.ctx.lineTo(this.points[j].x, this.points[j].y);
+          this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
+          this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
           this.ctx.stroke();
         }
       }
@@ -94,7 +107,7 @@ export class ParticleSystem {
   }
 
   _drawPoints() {
-    this.points.forEach(point => {
+    this.particles.forEach(point => {
       this.ctx.beginPath();
       this.ctx.ellipse(
         point.x - this.pointRadius,
@@ -108,16 +121,24 @@ export class ParticleSystem {
   }
 
   _movePoints(speedCoef) {
-    this.points.forEach(point => {
+    this.particles.forEach(point => {
       point.x += point.speed.x * speedCoef;
       point.y += point.speed.y * speedCoef;
 
-      if (point.x < this.pointRadius || point.x > this.width - this.pointRadius) {
-        point.speed = new Point(-point.speed.x, point.speed.y);
+      if (point.x < this.pointRadius) {
+        point.speed = new Point(Math.abs(point.speed.x), point.speed.y);
       }
 
-      if (point.y < this.pointRadius || point.y > this.height - this.pointRadius) {
-        point.speed = new Point(point.speed.x, -point.speed.y);
+      if (point.x > this.width - this.pointRadius) {
+        point.speed = new Point(-Math.abs(point.speed.x), point.speed.y);
+      }
+
+      if (point.y < this.pointRadius) {
+        point.speed = new Point(point.speed.x, Math.abs(point.speed.y));
+      }
+
+      if (point.y > this.height - this.pointRadius) {
+        point.speed = new Point(point.speed.x, -Math.abs(point.speed.y));
       }
     });
   }
