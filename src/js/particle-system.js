@@ -2,7 +2,7 @@ import { randomRange, getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
 import { Point } from './helpers/point';
 
-export class Points {
+export class ParticleSystem {
   /**
    * @param {HTMLCanvasElement} canvas 
    */
@@ -37,6 +37,13 @@ export class Points {
 
   start() {
     requestAnimationFrame(this._draw);
+  }
+
+  /**
+   * @param {Point} coords 
+   */
+  waterCircle(coords) {
+    console.log(coords);
   }
 
   /**
