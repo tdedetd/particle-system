@@ -1,4 +1,4 @@
-import { Color } from './helpers/color';
+import { Color } from './color';
 
 /**
  * @param {any[]} list 

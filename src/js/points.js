@@ -1,8 +1,8 @@
-import { Vector } from './vector';
-import { randomRange, getDistance, getColorString } from './utils';
+import { randomRange, getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
+import { Point } from './helpers/point';
 
-export class Scene {
+export class Points {
   /**
    * @param {HTMLCanvasElement} canvas 
    */
@@ -23,7 +23,6 @@ export class Scene {
 
     this._draw = this._draw.bind(this);
     this._generatePoints();
-    requestAnimationFrame(this._draw);
   }
 
   nextTheme() {
@@ -34,6 +33,10 @@ export class Scene {
   prevTheme() {
     this.themes.prev();
     this._updateColors();
+  }
+
+  start() {
+    requestAnimationFrame(this._draw);
   }
 
   /**
@@ -60,7 +63,7 @@ export class Scene {
       this.points.push({
         x: randomRange(this.pointRadius, this.width - this.pointRadius),
         y: randomRange(this.pointRadius, this.height - this.pointRadius),
-        speed: new Vector(
+        speed: new Point(
           randomRange(-100, 100),
           randomRange(-100, 100)
         )
@@ -103,11 +106,11 @@ export class Scene {
       point.y += point.speed.y * speedCoef;
 
       if (point.x < this.pointRadius || point.x > this.width - this.pointRadius) {
-        point.speed = new Vector(-point.speed.x, point.speed.y);
+        point.speed = new Point(-point.speed.x, point.speed.y);
       }
 
       if (point.y < this.pointRadius || point.y > this.height - this.pointRadius) {
-        point.speed = new Vector(point.speed.x, -point.speed.y);
+        point.speed = new Point(point.speed.x, -point.speed.y);
       }
     });
   }

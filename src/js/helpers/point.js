@@ -1,7 +1,7 @@
-export class Vector {
+export class Point {
   /**
-   * @param {number} x 
-   * @param {number} y 
+   * @param {number} x
+   * @param {number} y
    */
   constructor(x, y) {
     this.x = x;
