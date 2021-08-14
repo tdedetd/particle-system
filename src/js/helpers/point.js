@@ -1,4 +1,3 @@
-import { toDegrees } from './utils';
 import { PointPolar } from './point-polar';
 
 export class Point {
@@ -45,24 +44,24 @@ export class Point {
    * @returns {PointPolar}
    */
   toPolar(origin = null) {
-    const cartesian = origin ? this.subtract(origin) : this;
-    const x = cartesian.x;
-    const y = cartesian.y;
-    const zero = new Point(0, 0);
+    if (!origin) origin = new Point(0, 0);
+    const cartesian = this.subtract(origin);
+
+    const { x, y } = cartesian;
     let angle = 0;
 
     if (x > 0 && y >= 0) {
-      angle = toDegrees(Math.atan(y / x));
+      angle = Math.atan(y / x);
     } else if (x > 0 && y < 0) {
-      angle = toDegrees(Math.atan(y / x) + 2 * Math.PI);
+      angle = Math.atan(y / x) + 2 * Math.PI;
     } else if (x < 0) {
-      angle = toDegrees(Math.atan(y / x) + Math.PI);
+      angle = Math.atan(y / x) + Math.PI;
     } else if (x === 0 && y > 0) {
-      angle = toDegrees(Math.PI / 2);
+      angle = Math.PI / 2;
     } else if (x === 0 && y < 0) {
-      angle = toDegrees(3 * Math.PI / 2);
+      angle = 3 * Math.PI / 2;
     }
 
-    return new PointPolar(cartesian.getDistance(zero), angle);
+    return new PointPolar(cartesian.getDistance(origin), angle);
   }
 }

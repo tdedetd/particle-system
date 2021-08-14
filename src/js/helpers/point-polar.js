@@ -1,10 +1,9 @@
 import { Point } from "./point";
-import { toRadians } from './utils';
 
 export class PointPolar {
   /**
    * @param {number} distance
-   * @param {number} angle
+   * @param {number} angle in radians
    */
   constructor(distance, angle) {
     this.distance = distance;
@@ -19,8 +18,8 @@ export class PointPolar {
     if (!origin) origin = new Point(0, 0);
 
     const cartesianPoint = new Point (
-      this.distance * Math.cos(toRadians(this.angle)),
-      this.distance * Math.sin(toRadians(this.angle))
+      this.distance * Math.cos(this.angle),
+      this.distance * Math.sin(this.angle)
     );
 
     return cartesianPoint.add(origin);

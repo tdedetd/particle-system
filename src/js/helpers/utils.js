@@ -1,5 +1,4 @@
 import { Color } from './color';
-import { Point } from './point';
 
 /**
  * @param {any[]} list 
