@@ -81,7 +81,7 @@ export class PointPolar {
   toCartesian(origin = null) {
     if (!origin) origin = new Point(0, 0);
 
-    const cartesianPoint = new Point (
+    const cartesianPoint = new Point(
       this.distance * Math.cos(this.angle),
       this.distance * Math.sin(this.angle)
     );

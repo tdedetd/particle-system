@@ -1,23 +1,25 @@
-import { getDistance, getColorString, toDegrees } from './helpers/utils';
+import { getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
 import { Point, PointPolar } from './helpers/point';
 import { RandomParticleGenerator } from './particle-generator/random-particle-generator';
+import { ParticleSystemProperties } from './particle-system-properties';
 
 export class ParticleSystem {
   /**
-   * @param {HTMLCanvasElement} canvas 
+   * @param {HTMLCanvasElement} canvas
+   * @param {ParticleSystemProperties} properties
    */
-  constructor(canvas) {
+  constructor(canvas, properties) {
     canvas.width = canvas.clientWidth;
     canvas.height = canvas.clientHeight;
     this.themes = new Themes();
 
     this.width = canvas.width;
     this.height = canvas.height;
-    this.pointRadius = 1;
-    this.maxLineDistance = 100;
-    this.waterCircleRadius = 300;
-    this.maxParticleSpeed = 100;
+    this.pointRadius = properties.pointRadius;
+    this.maxLineDistance = properties.maxLineDistance;
+    this.waterCircleRadius = properties.waterCircleRadius;
+    this.maxParticleSpeed = properties.maxParticleSpeed;
 
     this.prevTimestamp = 0;
     this.canvas = canvas;
@@ -31,7 +33,8 @@ export class ParticleSystem {
 
     this.particles = this._particleGenerator.generate(
       Math.round(this.width * this.height / 5000),
-      this.pointRadius
+      this.pointRadius,
+      this.maxParticleSpeed
     );
   }
 

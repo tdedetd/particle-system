@@ -1,9 +1,10 @@
 import { Point } from './helpers/point';
 import { ParticleSystem } from './particle-system';
+import { PROPERTIES } from './config';
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.querySelector('#screen');
-  const particleSystem = new ParticleSystem(canvas);
+  const particleSystem = new ParticleSystem(canvas, PROPERTIES);
   let mouseDown = false;
   particleSystem.start();
 

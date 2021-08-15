@@ -16,9 +16,10 @@ export class RandomParticleGenerator extends ParticleGenerator {
   /**
    * @param {number} count
    * @param {number} radius
+   * @param {number}
    * @returns {Particle[]}
    */
-  generate(count, radius) {
+  generate(count, radius, maxSpeed) {
 
     /** @type {Particle[]} */
     const particles = [];
@@ -30,8 +31,8 @@ export class RandomParticleGenerator extends ParticleGenerator {
           randomRange(radius, this.height - radius)
         ),
         speed: new Point(
-          randomRange(-100, 100),
-          randomRange(-100, 100)
+          randomRange(-maxSpeed, maxSpeed),
+          randomRange(-maxSpeed, maxSpeed)
         )
       });
     }
