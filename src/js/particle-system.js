@@ -1,7 +1,7 @@
 import { randomRange, getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
-import { Point } from './helpers/point';
-import { PointPolar } from './helpers/point-polar';
+import { Point, PointPolar } from './helpers/point';
+import { Particle } from './particle';
 
 export class ParticleSystem {
   /**
@@ -46,7 +46,7 @@ export class ParticleSystem {
   waterCircle(center) {
     this.particles.forEach(part => {
       const speedPolar = part.speed.toPolar();
-      const partPolar = new Point(part.x, part.y).toPolar(center);
+      const partPolar = new Point(part.coords.x, part.coords.y).toPolar(center);
       const newSpeedPolar = new PointPolar(speedPolar.distance, partPolar.angle);
       part.speed = newSpeedPolar.toCartesian();
     });
@@ -72,16 +72,16 @@ export class ParticleSystem {
     const count = Math.round(this.width * this.height / 5000);
 
     /**
-     * TODO: Particle class
-     * @type {{ x: number, y: number, speed: Point }[]}
+     * @type {Particle[]}
      */
     this.particles = [];
 
     for (let i = 0; i < count; i++) {
-      // TODO: coords as Point
       this.particles.push({
-        x: randomRange(this.pointRadius, this.width - this.pointRadius),
-        y: randomRange(this.pointRadius, this.height - this.pointRadius),
+        coords: new Point(
+          randomRange(this.pointRadius, this.width - this.pointRadius),
+          randomRange(this.pointRadius, this.height - this.pointRadius)
+        ),
         speed: new Point(
           randomRange(-100, 100),
           randomRange(-100, 100)
@@ -94,12 +94,17 @@ export class ParticleSystem {
     for (let i = 0; i < this.particles.length; i++) {
       for (let j = i + 1; j < this.particles.length; j++) {
         // TODO: replace by Point method
-        const dist = getDistance(this.particles[i].x, this.particles[i].y, this.particles[j].x, this.particles[j].y);
+        const dist = getDistance(
+          this.particles[i].coords.x,
+          this.particles[i].coords.y,
+          this.particles[j].coords.x,
+          this.particles[j].coords.y
+        );
         if (dist < this.maxLineDistance) {
           this.ctx.strokeStyle = getColorString(this.foreColor, 1 - dist / this.maxLineDistance);
           this.ctx.beginPath();
-          this.ctx.moveTo(this.particles[i].x, this.particles[i].y);
-          this.ctx.lineTo(this.particles[j].x, this.particles[j].y);
+          this.ctx.moveTo(this.particles[i].coords.x, this.particles[i].coords.y);
+          this.ctx.lineTo(this.particles[j].coords.x, this.particles[j].coords.y);
           this.ctx.stroke();
         }
       }
@@ -110,8 +115,8 @@ export class ParticleSystem {
     this.particles.forEach(point => {
       this.ctx.beginPath();
       this.ctx.ellipse(
-        point.x - this.pointRadius,
-        point.y - this.pointRadius,
+        point.coords.x - this.pointRadius,
+        point.coords.y - this.pointRadius,
         this.pointRadius * 2,
         this.pointRadius * 2, 0, 0, Math.PI * 2
       );
@@ -122,22 +127,22 @@ export class ParticleSystem {
 
   _movePoints(speedCoef) {
     this.particles.forEach(point => {
-      point.x += point.speed.x * speedCoef;
-      point.y += point.speed.y * speedCoef;
+      point.coords.x += point.speed.x * speedCoef;
+      point.coords.y += point.speed.y * speedCoef;
 
-      if (point.x < this.pointRadius) {
+      if (point.coords.x < this.pointRadius) {
         point.speed = new Point(Math.abs(point.speed.x), point.speed.y);
       }
 
-      if (point.x > this.width - this.pointRadius) {
+      if (point.coords.x > this.width - this.pointRadius) {
         point.speed = new Point(-Math.abs(point.speed.x), point.speed.y);
       }
 
-      if (point.y < this.pointRadius) {
+      if (point.coords.y < this.pointRadius) {
         point.speed = new Point(point.speed.x, Math.abs(point.speed.y));
       }
 
-      if (point.y > this.height - this.pointRadius) {
+      if (point.coords.y > this.height - this.pointRadius) {
         point.speed = new Point(point.speed.x, -Math.abs(point.speed.y));
       }
     });
