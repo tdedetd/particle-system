@@ -1,7 +1,7 @@
-import { randomRange, getDistance, getColorString } from './helpers/utils';
+import { getDistance, getColorString } from './helpers/utils';
 import { Themes } from './themes';
 import { Point, PointPolar } from './helpers/point';
-import { Particle } from './particle';
+import { RandomParticleGenerator } from './particle-generator/random-particle-generator';
 
 export class ParticleSystem {
   /**
@@ -23,7 +23,14 @@ export class ParticleSystem {
     this._updateColors();
 
     this._draw = this._draw.bind(this);
-    this._generateParticles();
+
+    /** @type {ParticleGenerator} */
+    this._particleGenerator = new RandomParticleGenerator(this.width, this.height);
+
+    this.particles = this._particleGenerator.generate(
+      Math.round(this.width * this.height / 5000),
+      this.pointRadius
+    );
   }
 
   nextTheme() {
@@ -66,28 +73,6 @@ export class ParticleSystem {
     // this._drawPoints();
 
     requestAnimationFrame(this._draw);
-  }
-
-  _generateParticles() {
-    const count = Math.round(this.width * this.height / 5000);
-
-    /**
-     * @type {Particle[]}
-     */
-    this.particles = [];
-
-    for (let i = 0; i < count; i++) {
-      this.particles.push({
-        coords: new Point(
-          randomRange(this.pointRadius, this.width - this.pointRadius),
-          randomRange(this.pointRadius, this.height - this.pointRadius)
-        ),
-        speed: new Point(
-          randomRange(-100, 100),
-          randomRange(-100, 100)
-        )
-      });
-    }
   }
 
   _drawLines() {
