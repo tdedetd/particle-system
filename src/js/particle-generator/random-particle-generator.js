@@ -20,9 +20,7 @@ export class RandomParticleGenerator extends ParticleGenerator {
    */
   generate(count, radius) {
 
-    /**
-     * @type {Particle[]}
-     */
+    /** @type {Particle[]} */
     const particles = [];
 
     for (let i = 0; i < count; i++) {

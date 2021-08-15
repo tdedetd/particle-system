@@ -60,7 +60,7 @@ export class Point {
       angle = 3 * Math.PI / 2;
     }
 
-    return new PointPolar(cartesian.getDistance(origin), angle);
+    return new PointPolar(this.getDistance(origin), angle);
   }
 }
 

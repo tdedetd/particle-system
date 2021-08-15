@@ -1,4 +1,4 @@
-import { getDistance, getColorString } from './helpers/utils';
+import { getDistance, getColorString, toDegrees } from './helpers/utils';
 import { Themes } from './themes';
 import { Point, PointPolar } from './helpers/point';
 import { RandomParticleGenerator } from './particle-generator/random-particle-generator';
@@ -16,6 +16,8 @@ export class ParticleSystem {
     this.height = canvas.height;
     this.pointRadius = 1;
     this.maxLineDistance = 100;
+    this.waterCircleRadius = 300;
+    this.maxParticleSpeed = 100;
 
     this.prevTimestamp = 0;
     this.canvas = canvas;
@@ -52,10 +54,13 @@ export class ParticleSystem {
    */
   waterCircle(center) {
     this.particles.forEach(part => {
-      const speedPolar = part.speed.toPolar();
       const partPolar = new Point(part.coords.x, part.coords.y).toPolar(center);
-      const newSpeedPolar = new PointPolar(speedPolar.distance, partPolar.angle);
-      part.speed = newSpeedPolar.toCartesian();
+
+      if (partPolar.distance <= this.waterCircleRadius) {
+        const newSpeed = this.maxParticleSpeed * Math.sqrt(2) - (partPolar.distance * this.maxParticleSpeed / this.waterCircleRadius);
+        const newSpeedPolar = new PointPolar(newSpeed, partPolar.angle);
+        part.speed = newSpeedPolar.toCartesian();
+      }
     });
   }
 

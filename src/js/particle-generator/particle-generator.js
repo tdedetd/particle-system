@@ -12,11 +12,9 @@ export class ParticleGenerator {
   }
 
   /**
-   * @param {number} count
-   * @param {number} radius
    * @returns {Particle[]}
    */
-  generate(count, radius) {
+  generate() {
     return [];
   }
 }
